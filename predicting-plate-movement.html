@@ -1,0 +1,222 @@
+<html>
+  <head>
+    <title></title>
+    <style>
+      .imageDiv {
+        margin-left: 50;
+        margin-right: 50;
+        margin-bottom: 10;
+      }
+      #feedbackText {
+        font-weight: bold;
+        height: 20;
+        margin-bottom: 10;
+      }
+    </style>
+    <script>
+      function checkAnswers() {
+        showLeftPredictionImage();
+        showRightPredictionImage();
+        disableAllRadioButtons();
+        hideAllButtons();
+        setTimeout(showFeedbackTextAndTryAgainButton, 5000);
+      }
+
+      function showLeftPredictionImage() {
+        if (isLeftRadioCorrect()) {
+          displayImage('left', 'correct');
+        } else {
+          displayImage('left', 'incorrect');
+        }
+      }
+
+      function showRightPredictionImage() {
+        if (isRightRadioCorrect()) {
+          displayImage('right', 'correct');
+        } else {
+          displayImage('right', 'incorrect');
+        }
+      }
+
+      function showFeedbackTextAndTryAgainButton() {
+        showFeedbackText();
+        onlyShowTryAgainButton();
+      }
+
+      function showFeedbackText() {
+        if (isLeftRadioCorrect() && isRightRadioCorrect()) {
+          setCorrectFeedbackText();
+        } else {
+          setIncorrectFeedbackText();
+        }
+      }
+
+      function setCorrectFeedbackText() {
+        setFeedbackTextColor('green');
+        setFeedbackText('Nice job! If you are finished exploring, you may move on.');
+      }
+
+      function setIncorrectFeedbackText() {
+        setFeedbackTextColor('red');
+        setFeedbackText('Nice Try! Please try again.');
+      }
+
+      function setFeedbackText(text) {
+        document.getElementById('feedbackText').innerHTML = text;
+      }
+
+      function setFeedbackTextColor(color) {
+        document.getElementById('feedbackText').style.color = color;
+      }
+
+      function clearFeedbackText() {
+        document.getElementById('feedbackText').innerHTML = '';
+        document.getElementById('feedbackText').style.color = '';
+      }
+
+      function showStartingImages() {
+        showLeftStartingImage();
+        showRightStartingImage();
+      }
+
+      function showLeftStartingImage() {
+        displayImage('left', '');
+      }
+
+      function showRightStartingImage() {
+        displayImage('right', '');
+      }
+
+      function displayImage(leftOrRight, state) {
+        let imageName = `predicting-plate-movement-${leftOrRight}`;
+        if (state === 'correct') {
+          imageName = `${imageName}-correct`;
+        } else if (state === 'incorrect') {
+          imageName = `${imageName}-incorrect`;
+        }
+        imageName = `${imageName}.gif`;
+        document.getElementById(`${leftOrRight}Image`).src = imageName;
+      }
+
+      function tryAgain() {
+        clearPredictions();
+        hideAllButtons();
+        showStartingImages();
+        enableAllRadioButtons();
+        clearFeedbackText();
+      }
+
+      function clearPredictions() {
+        document.querySelector('input[name="leftRadioButtons"]:checked').checked = false;
+        document.querySelector('input[name="rightRadioButtons"]:checked').checked = false;
+      }
+
+      function disableAllRadioButtons() {
+        const radioButtons = getAllRadioButtons();
+        radioButtons.forEach(radioButton => radioButton.disabled = true);
+      }
+
+      function enableAllRadioButtons() {
+        const radioButtons = getAllRadioButtons();
+        radioButtons.forEach(radioButton => radioButton.disabled = false);
+      }
+
+      function getAllRadioButtons() {
+        return document.querySelectorAll('input[type="radio"]');
+      }
+
+      function isLeftRadioCorrect() {
+        const leftRadioValue = document.querySelector('input[name="leftRadioButtons"]:checked').value;
+        return leftRadioValue === 'apart';
+      }
+
+      function isRightRadioCorrect() {
+        const rightRadioValue = document.querySelector('input[name="rightRadioButtons"]:checked').value;
+        return rightRadioValue === 'together';
+      }
+
+      function predictionClicked() {
+        if (isBothPredictionsChosen()) {
+          onlyShowCheckAnswersButton();
+        }
+      }
+
+      function isBothPredictionsChosen() {
+        return document.querySelector('input[name="leftRadioButtons"]:checked') != null && 
+            document.querySelector('input[name="rightRadioButtons"]:checked') != null;
+      }
+
+      function hideAllButtons() {
+        hideTryAgainButton();
+        hideCheckAnswersButton();
+      }
+
+      function onlyShowCheckAnswersButton() {
+        hideTryAgainButton();
+        showCheckAnswersButton();
+      }
+
+      function onlyShowTryAgainButton() {
+        hideCheckAnswersButton();
+        showTryAgainButton();
+      }
+
+      function showCheckAnswersButton() {
+        document.getElementById('checkAnswersButton').style.display = 'inline';
+      }
+
+      function hideCheckAnswersButton() {
+        document.getElementById('checkAnswersButton').style.display = 'none';
+      }
+
+      function showTryAgainButton() {
+        document.getElementById('tryAgainButton').style.display = 'inline';
+      }
+
+      function hideTryAgainButton() {
+        document.getElementById('tryAgainButton').style.display = 'none';
+      }
+    </script>
+  </head>
+  <body>
+    <div style="text-align: center;">
+      <h3>Predicting Plate Movement</h3>
+      <p>The animations here show different sets of convection cells in the Earth's Mantle.</p>
+      <p>Predict whether the plates will move toward or away from each other.</p>
+      <div style="display: flex; justify-content: center;">
+        <div class="imageDiv">
+          <img
+            id="leftImage"
+            src="predicting-plate-movement-left.gif"
+            alt="Left Plates"
+            aria-label="Left Plates"
+          />
+          <div>
+            <p>Which way will the plates move?</p>
+            <input type="radio" name="leftRadioButtons" value="apart" onclick="predictionClicked()">Apart</input>
+            <input type="radio" name="leftRadioButtons" value="together" onclick="predictionClicked()">Together</input>
+          </div>
+        </div>
+        <div class="imageDiv">
+          <img
+            id="rightImage"
+            src="predicting-plate-movement-right.gif"
+            alt="Right Plates"
+            aria-label="Right Plates"
+          />
+          <div>
+            <p>Which way will the plates move?</p>
+            <input type="radio" name="rightRadioButtons" value="apart" onclick="predictionClicked()">Apart</input>
+            <input type="radio" name="rightRadioButtons" value="together" onclick="predictionClicked()">Together</input>
+          </div>
+        </div>
+      </div>
+      <div id="feedbackText">
+      </div>
+      <div>
+        <button id="checkAnswersButton" onclick="checkAnswers()" style="display: none">Check Answers</button>
+        <button id="tryAgainButton" onclick="tryAgain()" style="display: none">Try Again</button>
+      </div>
+    </div>
+  </body>
+</html>
